@@ -24,6 +24,7 @@ export TF_VAR_resource_group_name="$RESOURCE_GROUP_NAME"
 - [Day 04](days/day-04) - Create a Virtual Network (VNet) in Azure
 - [Day 05](days/day-05) - Create a Virtual Network (IPv4) in Azure
 - [Day 06](days/day-06) - Create a Subnet in Azure Virtual Network
+- [Day 07](days/day-07) - Create a Public IP Address for Azure VM
 
 
 ## Workstation configuration
