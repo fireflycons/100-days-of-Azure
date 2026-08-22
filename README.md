@@ -2,7 +2,7 @@
 
 This repo contains terraform solutions to all the tasks where infrastructure needs to be deployed. It does *not* contain solutions to additional tasks that might be required after the infrastructure is deployed, if those tasks cannot be done from terraform.
 
-Where days are missing are for those tasks that either cannot be done using terraform, or the question states to use the CLI for all tasks.
+Where days are missing are for those tasks that either cannot be done using terraform, or the question states to use the CLI or console for all tasks.
 
 For complete solutions you can refer to other peoples repos such as https://github.com/Srikanth0824/kodekloud-engineer/tree/main/100_Days_of_Cloud-Azure
 
@@ -21,6 +21,7 @@ export TF_VAR_resource_group_name="$RESOURCE_GROUP_NAME"
 
 - [Day 01](days/day-01) - Create SSH Key Pair for Azure Virtual Machines
 - [Day 02](days/day-02) - Create an Azure Virtual Machine
+- [Day 04](days/day-04) - Create a Virtual Network (VNet) in Azure
 
 
 ## Workstation configuration
@@ -35,7 +36,7 @@ All these solutions should be run in the KK lab terminal for ease, but should yo
 
 When you start a lab, you need to export 5 environment variables.
 
-Run these commands in the KK lab terminal to retrieve the required values
+Paste these commands into the KKE lab terminal and run them to retrieve the required values
 
 ```bash
 CREDS_FILE="/opt/creds.json"
@@ -43,7 +44,6 @@ CLIENT_ID=$(jq -r '."Azure Application Client ID"' "$CREDS_FILE")
 CLIENT_SECRET=$(jq -r '."Azure Client Secret"' "$CREDS_FILE")
 SUBSCRIPTION_ID=$(az account show --query "id" --output tsv)
 TENANT_ID=$(az account show --query "tenantId" --output tsv)
-RESOURCE_GROUP_NAME="${RESOURCE_GROUP_NAME:-}"
 
 # Display table
 echo
