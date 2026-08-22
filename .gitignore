@@ -1,0 +1,4 @@
+.github/
+variables.env
+.terraform/
+.terraform.lock.hcl
