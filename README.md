@@ -22,6 +22,8 @@ export TF_VAR_resource_group_name="$RESOURCE_GROUP_NAME"
 - [Day 01](days/day-01) - Create SSH Key Pair for Azure Virtual Machines
 - [Day 02](days/day-02) - Create an Azure Virtual Machine
 - [Day 04](days/day-04) - Create a Virtual Network (VNet) in Azure
+- [Day 05](days/day-05) - Create a Virtual Network (IPv4) in Azure
+- [Day 06](days/day-06) - Create a Subnet in Azure Virtual Network
 
 
 ## Workstation configuration
