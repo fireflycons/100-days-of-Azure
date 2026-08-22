@@ -25,6 +25,8 @@ export TF_VAR_resource_group_name="$RESOURCE_GROUP_NAME"
 - [Day 05](days/day-05) - Create a Virtual Network (IPv4) in Azure
 - [Day 06](days/day-06) - Create a Subnet in Azure Virtual Network
 - [Day 07](days/day-07) - Create a Public IP Address for Azure VM
+- [Day 08](days/day-08) - Attach Managed Disk to Azure Virtual Machine
+- [Day 09](days/day-09) - Attach Network Interface Card (NIC) to Azure Virtual Machine
 
 
 ## Workstation configuration
