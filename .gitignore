@@ -2,3 +2,4 @@
 variables.env
 .terraform/
 .terraform.lock.hcl
+set-env.ps1
