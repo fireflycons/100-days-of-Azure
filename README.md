@@ -19,6 +19,7 @@ export TF_VAR_resource_group_name="$RESOURCE_GROUP_NAME"
 
 ## Solutions
 
+- [Day 01](days/day-01) - Create SSH Key Pair for Azure Virtual Machines
 - [Day 02](days/day-02) - Create an Azure Virtual Machine
 
 
