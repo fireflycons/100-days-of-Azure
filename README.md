@@ -38,20 +38,25 @@ When you start a lab, you need to export 5 environment variables.
 Run these commands in the KK lab terminal to retrieve the required values
 
 ```bash
-showcreds
-az account show --query "{subscriptionId: id, tenantId: tenantId}" --output table
-echo -e "\nResource Group Name: $RESOURCE_GROUP_NAME"
+CREDS_FILE="/opt/creds.json"
+CLIENT_ID=$(jq -r '."Azure Application Client ID"' "$CREDS_FILE")
+CLIENT_SECRET=$(jq -r '."Azure Client Secret"' "$CREDS_FILE")
+SUBSCRIPTION_ID=$(az account show --query "id" --output tsv)
+TENANT_ID=$(az account show --query "tenantId" --output tsv)
+RESOURCE_GROUP_NAME="${RESOURCE_GROUP_NAME:-}"
+
+# Display table
+echo
+echo "Here are the values you need:"
+echo
+printf '%-22s %s\n' "Client ID:"             "$CLIENT_ID"
+printf '%-22s %s\n' "Client Secret:"         "$CLIENT_SECRET"
+printf '%-22s %s\n' "Subscription ID:"       "$SUBSCRIPTION_ID"
+printf '%-22s %s\n' "Tenant ID:"             "$TENANT_ID"
+printf '%-22s %s\n' "Resource Group Name:"   "$RESOURCE_GROUP_NAME"
 ```
 
-First retrieve the values you need to set from the output of the above commands
-
-* `Client ID` - Given as "Azure Application Client ID"
-* `Client Secret` - Given as "Azure Client Secret"
-* `Subscription ID` - Given as "SubscriptionId"
-* `Tenant ID` - Given as "TenantId"
-* `Resource Group Name` - Given as "Resource Group Name"
-
-Now set up the environment variables in the shell you are working in on your laptop, using the values you obtained above:
+First retrieve the values you need to set from the output of the above commands, then set up the environment variables in the shell you are working in on your laptop, using the values you obtained above:
 
 **bash/zsh (Linux/Mac)**
 
