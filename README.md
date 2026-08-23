@@ -2,7 +2,7 @@
 
 This repo contains terraform solutions to all the tasks where infrastructure needs to be deployed. It does *not* contain solutions to additional tasks that might be required after the infrastructure is deployed, if those tasks cannot be done from terraform.
 
-Where days are missing are for tasks, then they either cannot be done using terraform or the question states to use the CLI or console for all steps.
+Where days are missing are for tasks, then they either cannot be done using terraform, there is no cloud infrastructure to be deployed, or the question states to use the CLI or console for all steps.
 
 For complete solutions you can refer to other peoples repos such as https://github.com/Srikanth0824/kodekloud-engineer/tree/main/100_Days_of_Cloud-Azure
 
@@ -29,6 +29,7 @@ export TF_VAR_resource_group_name="$RESOURCE_GROUP_NAME"
 - [Day 09](days/day-09) - Attach Network Interface Card (NIC) to Azure Virtual Machine
 - [Day 10](days/day-10) - Attach Public IP to Azure Virtual Machine
 - [Day 12](days/day-12) - Add and Manage Tags for Azure Virtual Machines
+- [Day 14](days/day-14) - Create and Attach Managed Disks in Azure
 
 
 ## Workstation configuration
