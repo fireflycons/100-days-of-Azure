@@ -32,6 +32,7 @@ export TF_VAR_resource_group_name="$RESOURCE_GROUP_NAME"
 - [Day 14](days/day-14) - Create and Attach Managed Disks in Azure
 - [Day 15](days/day-15) - Create and Configure Network Security Group (NSG) in Azure
 - [Day 16](days/day-16) - Create a Private Azure Blob Storage Container
+- [Day 17](days/day-17) - Create a Public Azure Blob Storage Container
 
 
 ## Workstation configuration
