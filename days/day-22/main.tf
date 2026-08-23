@@ -35,7 +35,7 @@ variable "resource_group_name" {
 
 locals {
   location          = "eastus"
-  vm_name           = "datacenter-vm"
+  vm_name           = "${var.infrastructure_prefix}-vm"
   vm_size           = "Standard_B1s"
   admin_username    = "azureuser"
   image_publisher   = "Canonical"
