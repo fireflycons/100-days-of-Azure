@@ -30,6 +30,7 @@ export TF_VAR_resource_group_name="$RESOURCE_GROUP_NAME"
 - [Day 10](days/day-10) - Attach Public IP to Azure Virtual Machine
 - [Day 12](days/day-12) - Add and Manage Tags for Azure Virtual Machines
 - [Day 14](days/day-14) - Create and Attach Managed Disks in Azure
+- [Day 15](days/day-15) - Create and Configure Network Security Group (NSG) in Azure
 
 
 ## Workstation configuration
