@@ -35,6 +35,7 @@ export TF_VAR_resource_group_name="$RESOURCE_GROUP_NAME"
 - [Day 17](days/day-17) - Create a Public Azure Blob Storage Container
 - [Day 19](days/day-19) - Convert Public Azure Blob Container to Private
 - [Day 21](days/day-21) - Assigning Public IP to Virtual Machines
+- [Day 22](days/day-22) - Configuring Instances with User Data
 
 
 ## Workstation configuration

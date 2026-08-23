@@ -5,3 +5,5 @@ variables.env
 set-env.ps1
 clean.ps1
 *.tfplan
+setup-lab-terminal.sh
+
