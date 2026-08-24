@@ -38,6 +38,7 @@ export TF_VAR_resource_group_name="$RESOURCE_GROUP_NAME"
 - [Day 22](days/day-22) - Configuring Instances with User Data
 - [Day 24](days/day-24) - Securing Virtual Machine SSH Access
 - [Day 25](days/day-25) - Expanding and Managing Disk Storage
+- [Day 26](days/day-26) - Deploying Virtual Machines in a Public Virtual Network
 
 
 
