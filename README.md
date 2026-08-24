@@ -36,7 +36,8 @@ export TF_VAR_resource_group_name="$RESOURCE_GROUP_NAME"
 - [Day 19](days/day-19) - Convert Public Azure Blob Container to Private
 - [Day 21](days/day-21) - Assigning Public IP to Virtual Machines
 - [Day 22](days/day-22) - Configuring Instances with User Data
-- [Day 24](days/day-22) - Securing Virtual Machine SSH Access
+- [Day 24](days/day-24) - Securing Virtual Machine SSH Access
+- [Day 25](days/day-25) - Expanding and Managing Disk Storage
 
 
 
