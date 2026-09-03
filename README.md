@@ -15,6 +15,11 @@ curl -Lo terraform.zip https://releases.hashicorp.com/terraform/1.15.2/terraform
 unzip terraform.zip
 mv terraform /usr/local/bin/
 export TF_VAR_resource_group_name="$RESOURCE_GROUP_NAME"
+export TF_VAR_client_id=$(jq -r '."Azure Application Client ID"' /opt/creds.json)
+export TF_VAR_client_secret=$(jq -r '."Azure Client Secret"' /opt/creds.json)
+export TF_VAR_subscription_id=$(az account show --query "id" --output tsv)
+export TF_VAR_tenant_id=$(az account show --query "tenantId" --output tsv)
+
 ```
 
 ## Solutions
@@ -39,8 +44,12 @@ export TF_VAR_resource_group_name="$RESOURCE_GROUP_NAME"
 - [Day 24](days/day-24) - Securing Virtual Machine SSH Access
 - [Day 25](days/day-25) - Expanding and Managing Disk Storage
 - [Day 26](days/day-26) - Deploying Virtual Machines in a Public Virtual Network
+- [Day 27](days/day-27) - Deploying Virtual Machines in a Private Virtual Network
+- [Day 29](days/day-29) - Working with Azure Container Registry (ACR)
 
+## Note on solution implementation
 
+For some of these tasks the `azure/azapi` provider is used for patching live resources pulled into the configuration as data sources. In real production use, this is a *Very Bad Idea*. Resources should be fully owned by terraform or not owned at all (in which case immutable). Normally for pre-existing resources you would `terraform import` them such that they become fully owned.
 
 ## Workstation configuration
 
