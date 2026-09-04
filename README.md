@@ -48,6 +48,7 @@ export TF_VAR_tenant_id=$(jq -r '.subscriptions[] | select(.isDefault == true) |
 - [Day 29](days/day-29) - Working with Azure Container Registry (ACR)
 - [Day 30](days/day-30) - Create Azure SQL Database
 - [Day 31](days/day-31) - Deploying and Managing a Web Application
+- [Day 32](days/day-32) - Synchronizing Containers Using the CLI
 
 ## Note on solution implementation
 
