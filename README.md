@@ -46,6 +46,7 @@ export TF_VAR_tenant_id=$(az account show --query "tenantId" --output tsv)
 - [Day 26](days/day-26) - Deploying Virtual Machines in a Public Virtual Network
 - [Day 27](days/day-27) - Deploying Virtual Machines in a Private Virtual Network
 - [Day 29](days/day-29) - Working with Azure Container Registry (ACR)
+- [Day 30](days/day-30) - Create Azure SQL Database
 
 ## Note on solution implementation
 
