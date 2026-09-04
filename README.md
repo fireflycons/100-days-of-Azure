@@ -17,8 +17,8 @@ mv terraform /usr/local/bin/
 export TF_VAR_resource_group_name="$RESOURCE_GROUP_NAME"
 export TF_VAR_client_id=$(jq -r '."Azure Application Client ID"' /opt/creds.json)
 export TF_VAR_client_secret=$(jq -r '."Azure Client Secret"' /opt/creds.json)
-export TF_VAR_subscription_id=$(az account show --query "id" --output tsv)
-export TF_VAR_tenant_id=$(az account show --query "tenantId" --output tsv)
+export TF_VAR_subscription_id=$(jq -r '.subscriptions[] | select(.isDefault == true) | .id' ~/.azure/azureProfile.json)
+export TF_VAR_tenant_id=$(jq -r '.subscriptions[] | select(.isDefault == true) | .tenantId' ~/.azure/azureProfile.json)
 
 ```
 
@@ -47,6 +47,7 @@ export TF_VAR_tenant_id=$(az account show --query "tenantId" --output tsv)
 - [Day 27](days/day-27) - Deploying Virtual Machines in a Private Virtual Network
 - [Day 29](days/day-29) - Working with Azure Container Registry (ACR)
 - [Day 30](days/day-30) - Create Azure SQL Database
+- [Day 31](days/day-31) - Deploying and Managing a Web Application
 
 ## Note on solution implementation
 
