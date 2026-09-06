@@ -50,6 +50,7 @@ export TF_VAR_tenant_id=$(jq -r '.subscriptions[] | select(.isDefault == true) |
 - [Day 31](days/day-31) - Deploying and Managing a Web Application
 - [Day 32](days/day-32) - Synchronizing Containers Using the CLI
 - [Day 33](days/day-33) - Integrating Virtual Machines with Application Load Balancer
+- [Day 34](days/day-34) - Enabling Internet Connectivity for Virtual Machines
 
 ## Note on solution implementation
 
