@@ -27,8 +27,17 @@ variable "resource_group_name" {
   type = string
 }
 
+variable "azure_region" {
+  description = "Azure region for deployed resources"
+  type        = string
+
+  validation {
+    condition     = contains(["eastus", "westus", "centralus"], var.azure_region)
+    error_message = "azure_region must be one of eastus, westus, centralus."
+  }
+}
+
 locals {
-  location       = "southcentralus"
   public_ip_name = "${var.infrastructure_prefix}-pip"
 }
 
@@ -38,7 +47,7 @@ data "azurerm_resource_group" "this" {
 
 resource "azurerm_public_ip" "this" {
   name                = local.public_ip_name
-  location            = local.location
+  location            = var.azure_region
   resource_group_name = data.azurerm_resource_group.this.name
   allocation_method   = "Static"
 }

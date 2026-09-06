@@ -33,12 +33,21 @@ variable "resource_group_name" {
   type        = string
 }
 
+variable "azure_region" {
+  description = "Azure region for deployed resources"
+  type        = string
+
+  validation {
+    condition     = contains(["eastus", "westus", "centralus"], var.azure_region)
+    error_message = "azure_region must be one of eastus, westus, centralus."
+  }
+}
+
 data "azurerm_resource_group" "this" {
   name = var.resource_group_name
 }
 
 locals {
-  location           = "Central US"
   admin_username     = "azureadmin"
   vm_size            = "Standard_B1s"
   vnet_address_space = ["10.0.0.0/16"]
@@ -49,7 +58,7 @@ locals {
 
 resource "azurerm_virtual_network" "private" {
   name                = "${var.infrastructure_prefix}-priv-vnet"
-  location            = local.location
+  location            = var.azure_region
   resource_group_name = data.azurerm_resource_group.this.name
   address_space       = local.vnet_address_space
 }
@@ -63,7 +72,7 @@ resource "azurerm_subnet" "private" {
 
 resource "azurerm_network_security_group" "private" {
   name                = "${var.infrastructure_prefix}-priv-nsg"
-  location            = local.location
+  location            = var.azure_region
   resource_group_name = data.azurerm_resource_group.this.name
 
   security_rule {
@@ -86,7 +95,7 @@ resource "azurerm_subnet_network_security_group_association" "private" {
 
 resource "azurerm_network_interface" "private" {
   name                = "${var.infrastructure_prefix}-priv-nic"
-  location            = local.location
+  location            = var.azure_region
   resource_group_name = data.azurerm_resource_group.this.name
 
   ip_configuration {
@@ -104,7 +113,7 @@ resource "tls_private_key" "vm" {
 resource "azurerm_linux_virtual_machine" "private" {
   name                            = "${var.infrastructure_prefix}-priv-vm"
   resource_group_name             = data.azurerm_resource_group.this.name
-  location                        = local.location
+  location                        = var.azure_region
   size                            = local.vm_size
   admin_username                  = local.admin_username
   disable_password_authentication = true

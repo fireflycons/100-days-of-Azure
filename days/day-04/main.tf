@@ -27,18 +27,27 @@ variable "resource_group_name" {
   type = string
 }
 
+variable "azure_region" {
+  description = "Azure region for deployed resources"
+  type        = string
+
+  validation {
+    condition     = contains(["eastus", "westus", "centralus"], var.azure_region)
+    error_message = "azure_region must be one of eastus, westus, centralus."
+  }
+}
+
 data "azurerm_resource_group" "this" {
   name = var.resource_group_name
 }
 
 locals {
   vnet_name = "${var.infrastructure_prefix}-vnet"
-  location  = "centralus"
 }
 
 resource "azurerm_virtual_network" "this" {
   name                = local.vnet_name
   address_space       = ["10.0.0.0/16"]
-  location            = local.location
+  location            = var.azure_region
   resource_group_name = data.azurerm_resource_group.this.name
 }

@@ -33,8 +33,17 @@ variable "resource_group_name" {
   type        = string
 }
 
+variable "azure_region" {
+  description = "Azure region for deployed resources"
+  type        = string
+
+  validation {
+    condition     = contains(["eastus", "westus", "centralus"], var.azure_region)
+    error_message = "azure_region must be one of eastus, westus, centralus."
+  }
+}
+
 locals {
-  location           = "eastus"
   vm_size            = "Standard_B1s"
   admin_username     = "azureuser"
   vm_image_publisher = "Canonical"
@@ -55,7 +64,7 @@ resource "tls_private_key" "vm_key" {
 resource "azurerm_virtual_network" "public" {
   name                = "${var.infrastructure_prefix}-pub-vnet"
   address_space       = ["10.0.0.0/16"]
-  location            = local.location
+  location            = var.azure_region
   resource_group_name = data.azurerm_resource_group.this.name
 }
 
@@ -68,7 +77,7 @@ resource "azurerm_subnet" "public" {
 
 resource "azurerm_network_security_group" "public" {
   name                = "${var.infrastructure_prefix}-pub-nsg"
-  location            = local.location
+  location            = var.azure_region
   resource_group_name = data.azurerm_resource_group.this.name
 
   security_rule {
@@ -86,7 +95,7 @@ resource "azurerm_network_security_group" "public" {
 
 resource "azurerm_public_ip" "public" {
   name                = "${var.infrastructure_prefix}-pub-ip"
-  location            = local.location
+  location            = var.azure_region
   resource_group_name = data.azurerm_resource_group.this.name
   allocation_method   = "Static"
   sku                 = "Standard"
@@ -94,7 +103,7 @@ resource "azurerm_public_ip" "public" {
 
 resource "azurerm_network_interface" "public" {
   name                = "${var.infrastructure_prefix}-pub-nic"
-  location            = local.location
+  location            = var.azure_region
   resource_group_name = data.azurerm_resource_group.this.name
 
   ip_configuration {
@@ -112,7 +121,7 @@ resource "azurerm_network_interface_security_group_association" "public" {
 
 resource "azurerm_linux_virtual_machine" "public" {
   name                = "${var.infrastructure_prefix}-pub-vm"
-  location            = local.location
+  location            = var.azure_region
   resource_group_name = data.azurerm_resource_group.this.name
   size                = local.vm_size
 

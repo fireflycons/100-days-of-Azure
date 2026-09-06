@@ -27,8 +27,17 @@ variable "resource_group_name" {
   type        = string
 }
 
+variable "azure_region" {
+  description = "Azure region for deployed resources"
+  type        = string
+
+  validation {
+    condition     = contains(["eastus", "westus", "centralus"], var.azure_region)
+    error_message = "azure_region must be one of eastus, westus, centralus."
+  }
+}
+
 locals {
-  location          = "centralus"
   web_app_name      = "${var.infrastructure_prefix}-webapp"
   service_plan_name = "${var.infrastructure_prefix}-learn-python"
   tags = {
@@ -44,7 +53,7 @@ data "azurerm_resource_group" "this" {
 resource "azurerm_service_plan" "python" {
   name                = local.service_plan_name
   resource_group_name = data.azurerm_resource_group.this.name
-  location            = local.location
+  location            = var.azure_region
   os_type             = "Linux"
   sku_name            = "B1"
   tags                = local.tags
@@ -53,7 +62,7 @@ resource "azurerm_service_plan" "python" {
 resource "azurerm_linux_web_app" "python" {
   name                = local.web_app_name
   resource_group_name = data.azurerm_resource_group.this.name
-  location            = local.location
+  location            = var.azure_region
   service_plan_id     = azurerm_service_plan.python.id
   enabled             = true
   https_only          = true

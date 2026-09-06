@@ -33,8 +33,17 @@ variable "resource_group_name" {
   type        = string
 }
 
+variable "azure_region" {
+  description = "Azure region for deployed resources"
+  type        = string
+
+  validation {
+    condition     = contains(["eastus", "westus", "centralus"], var.azure_region)
+    error_message = "azure_region must be one of eastus, westus, centralus."
+  }
+}
+
 locals {
-  location     = "southcentralus"
   ssh_key_name = "${var.infrastructure_prefix}-kp"
 }
 
@@ -46,7 +55,7 @@ resource "azapi_resource" "ssh_key" {
   type      = "Microsoft.Compute/sshPublicKeys@2023-09-01"
   name      = local.ssh_key_name
   parent_id = data.azurerm_resource_group.this.id
-  location  = local.location
+  location  = var.azure_region
 
   body = {
     properties = {}

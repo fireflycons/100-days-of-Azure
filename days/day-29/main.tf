@@ -55,12 +55,21 @@ variable "repository_name_suffix" {
   type        = string
 }
 
+variable "azure_region" {
+  description = "Azure region for deployed resources"
+  type        = string
+
+  validation {
+    condition     = contains(["eastus", "westus", "centralus"], var.azure_region)
+    error_message = "azure_region must be one of eastus, westus, centralus."
+  }
+}
+
 data "azurerm_resource_group" "this" {
   name = var.resource_group_name
 }
 
 locals {
-  location        = "East US"
   repository_name = "${var.infrastructure_prefix}${var.repository_name_suffix}"
   creds           = jsondecode(file("/opt/creds.json"))
 }
@@ -68,7 +77,7 @@ locals {
 resource "azurerm_container_registry" "this" {
   name                = local.repository_name
   resource_group_name = data.azurerm_resource_group.this.name
-  location            = local.location
+  location            = var.azure_region
   sku                 = "Basic"
 }
 

@@ -33,8 +33,17 @@ variable "resource_group_name" {
   type        = string
 }
 
+variable "azure_region" {
+  description = "Azure region for deployed resources"
+  type        = string
+
+  validation {
+    condition     = contains(["eastus", "westus", "centralus"], var.azure_region)
+    error_message = "azure_region must be one of eastus, westus, centralus."
+  }
+}
+
 locals {
-  vm_location        = "southcentralus"
   vm_size            = "Standard_B1s"
   vm_image_publisher = "Canonical"
   vm_image_offer     = "ubuntu-24_04-lts"
@@ -57,7 +66,7 @@ data "azurerm_resource_group" "this" {
 resource "azurerm_virtual_network" "this" {
   name                = "${var.infrastructure_prefix}-vnet"
   address_space       = ["10.0.0.0/16"]
-  location            = local.vm_location
+  location            = var.azure_region
   resource_group_name = data.azurerm_resource_group.this.name
 }
 
@@ -70,7 +79,7 @@ resource "azurerm_subnet" "this" {
 
 resource "azurerm_network_security_group" "this" {
   name                = "${var.infrastructure_prefix}-nsg"
-  location            = local.vm_location
+  location            = var.azure_region
   resource_group_name = data.azurerm_resource_group.this.name
 
   security_rule {
@@ -88,7 +97,7 @@ resource "azurerm_network_security_group" "this" {
 
 resource "azurerm_public_ip" "this" {
   name                = "${var.infrastructure_prefix}-public-ip"
-  location            = local.vm_location
+  location            = var.azure_region
   resource_group_name = data.azurerm_resource_group.this.name
   allocation_method   = "Static"
   sku                 = "Standard"
@@ -96,7 +105,7 @@ resource "azurerm_public_ip" "this" {
 
 resource "azurerm_network_interface" "this" {
   name                = "${var.infrastructure_prefix}-nic"
-  location            = local.vm_location
+  location            = var.azure_region
   resource_group_name = data.azurerm_resource_group.this.name
 
   ip_configuration {
@@ -114,7 +123,7 @@ resource "azurerm_network_interface_security_group_association" "this" {
 
 resource "azurerm_linux_virtual_machine" "this" {
   name                = "${var.infrastructure_prefix}-vm"
-  location            = local.vm_location
+  location            = var.azure_region
   resource_group_name = data.azurerm_resource_group.this.name
   size                = local.vm_size
 
@@ -147,7 +156,7 @@ resource "azurerm_linux_virtual_machine" "this" {
 
 resource "azurerm_managed_disk" "data_disk" {
   name                 = "${var.infrastructure_prefix}-datadisk"
-  location             = local.vm_location
+  location             = var.azure_region
   resource_group_name  = data.azurerm_resource_group.this.name
   storage_account_type = local.data_disk_type
   create_option        = "Empty"

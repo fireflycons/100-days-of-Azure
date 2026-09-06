@@ -36,12 +36,21 @@ variable "server_name_suffix" {
   type        = string
 }
 
+variable "azure_region" {
+  description = "Azure region for deployed resources"
+  type        = string
+
+  validation {
+    condition     = contains(["eastus", "westus", "centralus"], var.azure_region)
+    error_message = "azure_region must be one of eastus, westus, centralus."
+  }
+}
+
 data "azurerm_resource_group" "this" {
   name = var.resource_group_name
 }
 
 locals {
-  location       = "West US"
   database_name  = "${var.infrastructure_prefix}-sqldb"
   server_name    = "${var.infrastructure_prefix}-server-${var.server_name_suffix}"
   admin_username = "${var.infrastructure_prefix}-admin"
@@ -56,7 +65,7 @@ resource "random_password" "sql_admin" {
 resource "azurerm_mssql_server" "this" {
   name                         = local.server_name
   resource_group_name          = data.azurerm_resource_group.this.name
-  location                     = local.location
+  location                     = var.azure_region
   version                      = "12.0"
   administrator_login          = local.admin_username
   administrator_login_password = random_password.sql_admin.result
