@@ -52,6 +52,7 @@ export TF_VAR_tenant_id=$(jq -r '.subscriptions[] | select(.isDefault == true) |
 - [Day 33](days/day-33) - Integrating Virtual Machines with Application Load Balancer
 - [Day 34](days/day-34) - Enabling Internet Connectivity for Virtual Machines
 - [Day 35](days/day-35) - Configuring Virtual Network Peering
+- [Day 36](days/day-36) - Managing Storage Lifecycle in Azure
 
 ## Note on solution implementation
 
