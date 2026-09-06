@@ -49,6 +49,7 @@ export TF_VAR_tenant_id=$(jq -r '.subscriptions[] | select(.isDefault == true) |
 - [Day 30](days/day-30) - Create Azure SQL Database
 - [Day 31](days/day-31) - Deploying and Managing a Web Application
 - [Day 32](days/day-32) - Synchronizing Containers Using the CLI
+- [Day 33](days/day-33) - Integrating Virtual Machines with Application Load Balancer
 
 ## Note on solution implementation
 
