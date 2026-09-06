@@ -51,6 +51,7 @@ export TF_VAR_tenant_id=$(jq -r '.subscriptions[] | select(.isDefault == true) |
 - [Day 32](days/day-32) - Synchronizing Containers Using the CLI
 - [Day 33](days/day-33) - Integrating Virtual Machines with Application Load Balancer
 - [Day 34](days/day-34) - Enabling Internet Connectivity for Virtual Machines
+- [Day 35](days/day-35) - Configuring Virtual Network Peering
 
 ## Note on solution implementation
 
