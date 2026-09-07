@@ -53,6 +53,7 @@ export TF_VAR_tenant_id=$(jq -r '.subscriptions[] | select(.isDefault == true) |
 - [Day 34](days/day-34) - Enabling Internet Connectivity for Virtual Machines
 - [Day 35](days/day-35) - Configuring Virtual Network Peering
 - [Day 36](days/day-36) - Managing Storage Lifecycle in Azure
+- [Day 37](days/day-37) - Setting Up MySQL on a Virtual Machine in Azure
 
 ## Note on solution implementation
 
