@@ -54,10 +54,13 @@ export TF_VAR_tenant_id=$(jq -r '.subscriptions[] | select(.isDefault == true) |
 - [Day 35](days/day-35) - Configuring Virtual Network Peering
 - [Day 36](days/day-36) - Managing Storage Lifecycle in Azure
 - [Day 37](days/day-37) - Setting Up MySQL on a Virtual Machine in Azure
+- [Day 38](days/day-38) - Running Containers on Azure Virtual Machines
 
 ## Note on solution implementation
 
 For some of these tasks the `azure/azapi` provider is used for patching live resources pulled into the configuration as data sources. In real production use, this is a *Very Bad Idea*. Resources should be fully owned by terraform or not owned at all (in which case immutable). Normally for pre-existing resources you would `terraform import` them such that they become fully owned.
+
+For other tasks where an already existing machine needs to be configured by executing commands on it, the `local-exec` provisioner is used to run remote commands over SSH. This is also not seen as good practice in production. Ideally infrastructure should be immutable, meaning that all configuration is done by custom data/userdata scripts when a VM is first deployed, either that or pre-burned into a custom machine image.
 
 ## Workstation configuration
 
