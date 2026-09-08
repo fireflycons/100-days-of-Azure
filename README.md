@@ -55,6 +55,7 @@ export TF_VAR_tenant_id=$(jq -r '.subscriptions[] | select(.isDefault == true) |
 - [Day 36](days/day-36) - Managing Storage Lifecycle in Azure
 - [Day 37](days/day-37) - Setting Up MySQL on a Virtual Machine in Azure
 - [Day 38](days/day-38) - Running Containers on Azure Virtual Machines
+- [Day 39](days/day-39) - Deploying a Static Website Using Containers on Azure
 
 ## Note on solution implementation
 
