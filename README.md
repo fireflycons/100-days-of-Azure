@@ -57,6 +57,7 @@ export TF_VAR_tenant_id=$(jq -r '.subscriptions[] | select(.isDefault == true) |
 - [Day 38](days/day-38) - Running Containers on Azure Virtual Machines
 - [Day 39](days/day-39) - Deploying a Static Website Using Containers on Azure
 - [Day 40](days/day-40) - Managing Secrets with Azure Key Vault
+- [Day 41](days/day-41) - Working with Azure Table Storage
 
 ## Note on solution implementation
 
