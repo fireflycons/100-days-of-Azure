@@ -61,6 +61,7 @@ export TF_VAR_tenant_id=$(jq -r '.subscriptions[] | select(.isDefault == true) |
 - [Day 42](days/day-42) - Backup and Delete Azure Storage Blob Container
 - [Day 43](days/day-43) - Configuring Azure VM with Application Gateway
 - [Day 44](days/day-44) - Integrating Azure Event Hub with Virtual Machines
+- [Day 45](days/day-45) - Azure Kubernetes Service (AKS) Setup and Management
 
 ## Note on solution implementation
 
