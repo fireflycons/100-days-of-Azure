@@ -59,6 +59,7 @@ export TF_VAR_tenant_id=$(jq -r '.subscriptions[] | select(.isDefault == true) |
 - [Day 40](days/day-40) - Managing Secrets with Azure Key Vault
 - [Day 41](days/day-41) - Working with Azure Table Storage
 - [Day 42](days/day-42) - Backup and Delete Azure Storage Blob Container
+- [Day 43](days/day-43) - Configuring Azure VM with Application Gateway
 
 ## Note on solution implementation
 
