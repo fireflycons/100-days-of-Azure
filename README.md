@@ -63,12 +63,13 @@ export TF_VAR_tenant_id=$(jq -r '.subscriptions[] | select(.isDefault == true) |
 - [Day 44](days/day-44) - Integrating Azure Event Hub with Virtual Machines
 - [Day 45](days/day-45) - Azure Kubernetes Service (AKS) Setup and Management
 - [Day 46](days/day-46) - EventHub to Blob Storage Integration Setup
+- [Day 47](days/day-47) - SQL Database Migration and Setup
 
 ## Note on solution implementation
 
 For some of these tasks the `azure/azapi` provider is used for patching live resources pulled into the configuration as data sources. In real production use, this is a *Very Bad Idea*. Resources should be fully owned by terraform or not owned at all (in which case immutable). Normally for pre-existing resources you would `terraform import` them such that they become fully owned.
 
-For other tasks where an already existing machine needs to be configured by executing commands on it, the `local-exec` provisioner is used to run remote commands over SSH. This is also not seen as good practice in production. Ideally infrastructure should be immutable, meaning that all configuration is done by custom data/userdata scripts when a VM is first deployed, either that or pre-burned into a custom machine image.
+For other tasks where an already existing machine needs to be configured by executing commands on it, the `local-exec` provisioner is used to run remote commands over SSH. This is also not seen as good practice in production. Ideally infrastructure should be immutable, meaning that all configuration is done by custom data/userdata scripts when a VM is first deployed, either that or pre-burned into a custom machine image. For reconfiguration of VMs that are already running, Ansible would be the better choice.
 
 ## Workstation configuration
 
