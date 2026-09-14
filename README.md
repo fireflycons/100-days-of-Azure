@@ -62,6 +62,7 @@ export TF_VAR_tenant_id=$(jq -r '.subscriptions[] | select(.isDefault == true) |
 - [Day 43](days/day-43) - Configuring Azure VM with Application Gateway
 - [Day 44](days/day-44) - Integrating Azure Event Hub with Virtual Machines
 - [Day 45](days/day-45) - Azure Kubernetes Service (AKS) Setup and Management
+- [Day 46](days/day-46) - EventHub to Blob Storage Integration Setup
 
 ## Note on solution implementation
 
