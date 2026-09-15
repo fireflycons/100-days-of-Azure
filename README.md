@@ -64,6 +64,7 @@ export TF_VAR_tenant_id=$(jq -r '.subscriptions[] | select(.isDefault == true) |
 - [Day 45](days/day-45) - Azure Kubernetes Service (AKS) Setup and Management
 - [Day 46](days/day-46) - EventHub to Blob Storage Integration Setup
 - [Day 47](days/day-47) - SQL Database Migration and Setup
+- [Day 48](days/day-48) - VM and ACR Integration for Storage
 
 ## Note on solution implementation
 
