@@ -110,8 +110,8 @@ resource "terraform_data" "write_ssh_key" {
 
     command = <<-BASH
       set -euo pipefail
-      mkdir -p "$HOME/.ssh"
-      chmod 700 "$HOME/.ssh"
+      mkdir -p "$(dirname "$SSH_KEY_PATH")"
+      chmod 700 "$(dirname "$SSH_KEY_PATH")"
       printf '%s\n' "$SSH_PRIVATE_KEY" > "$SSH_KEY_PATH"
       chmod 600 "$SSH_KEY_PATH"
     BASH
