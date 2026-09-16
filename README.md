@@ -8,7 +8,7 @@ For complete solutions you can refer to other peoples repos such as https://gith
 
 ## Install terraform on the lab terminal
 
-For each lab, paste and run these commands into the lab terminal to set up terraform.
+For each lab, paste and run these commands into the lab terminal to set up terraform, and to create environment variables for Azure interaction. All configurations use the resource group name and some of them require some or all of the authentication variables.
 
 ```bash
 curl -Lo terraform.zip https://releases.hashicorp.com/terraform/1.15.2/terraform_1.15.2_linux_amd64.zip
@@ -74,63 +74,4 @@ export TF_VAR_tenant_id=$(jq -r '.subscriptions[] | select(.isDefault == true) |
 For some of these tasks the `azure/azapi` provider is used for patching live resources pulled into the configuration as data sources. In real production use, this is a *Very Bad Idea*. Resources should be fully owned by terraform or not owned at all (in which case immutable). Normally for pre-existing resources you would `terraform import` them such that they become fully owned.
 
 For other tasks where an already existing machine needs to be configured by executing commands on it, the `local-exec` provisioner is used to run remote commands over SSH. This is also not seen as good practice in production. Ideally infrastructure should be immutable, meaning that all configuration is done by custom data/userdata scripts when a VM is first deployed, either that or pre-burned into a custom machine image. For reconfiguration of VMs that are already running, Ansible would be the better choice.
-
-## Workstation configuration
-
-All these solutions should be run in the KK lab terminal for ease, but should you want to clone the repo to your own laptop and run if from there, you need to set a few things up.
-
-### Prerequisites
-
-* `terraform` installed
-
-### Environment variables
-
-When you start a lab, you need to export 5 environment variables.
-
-Paste these commands into the KKE lab terminal and run them to retrieve the required values
-
-```bash
-CREDS_FILE="/opt/creds.json"
-CLIENT_ID=$(jq -r '."Azure Application Client ID"' "$CREDS_FILE")
-CLIENT_SECRET=$(jq -r '."Azure Client Secret"' "$CREDS_FILE")
-SUBSCRIPTION_ID=$(az account show --query "id" --output tsv)
-TENANT_ID=$(az account show --query "tenantId" --output tsv)
-
-# Display table
-echo
-echo "Here are the values you need:"
-echo
-printf '%-22s %s\n' "Client ID:"             "$CLIENT_ID"
-printf '%-22s %s\n' "Client Secret:"         "$CLIENT_SECRET"
-printf '%-22s %s\n' "Subscription ID:"       "$SUBSCRIPTION_ID"
-printf '%-22s %s\n' "Tenant ID:"             "$TENANT_ID"
-printf '%-22s %s\n' "Resource Group Name:"   "$RESOURCE_GROUP_NAME"
-```
-
-First retrieve the values you need to set from the output of the above commands, then set up the environment variables in the shell you are working in on your laptop, using the values you obtained above:
-
-**bash/zsh (Linux/Mac)**
-
-```bash
-export ARM_CLIENT_ID="replace-with-client-id"
-export ARM_CLIENT_SECRET="replace-with-client-secret"
-export ARM_TENANT_ID="replace-with-tenant-id"
-export ARM_SUBSCRIPTION_ID="replace-with-subscription-id"
-export TF_VAR_resource_group_name="replace-with-resource-group-name"
-```
-
-**Windows PowerShell**
-
-```powershell
-$env:ARM_CLIENT_ID="replace-with-client-id"
-$env:ARM_CLIENT_SECRET="replace-with-client-secret"
-$env:ARM_TENANT_ID="replace-with-tenant-id"
-$env:ARM_SUBSCRIPTION_ID="replace-with-subscription-id"
-$env:TF_VAR_resource_group_name="replace-with-resource-group-name"
-```
-
-
-
-
-
 
