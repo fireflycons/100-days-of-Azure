@@ -41,6 +41,7 @@ export TF_VAR_tenant_id=$(jq -r '.subscriptions[] | select(.isDefault == true) |
 - [Day 19](days/day-19) - Convert Public Azure Blob Container to Private
 - [Day 21](days/day-21) - Assigning Public IP to Virtual Machines
 - [Day 22](days/day-22) - Configuring Instances with User Data
+- [Day 23](days/day-23) - Automating User Data Configuration
 - [Day 24](days/day-24) - Securing Virtual Machine SSH Access
 - [Day 25](days/day-25) - Expanding and Managing Disk Storage
 - [Day 26](days/day-26) - Deploying Virtual Machines in a Public Virtual Network
@@ -48,7 +49,7 @@ export TF_VAR_tenant_id=$(jq -r '.subscriptions[] | select(.isDefault == true) |
 - [Day 29](days/day-29) - Working with Azure Container Registry (ACR)
 - [Day 30](days/day-30) - Create Azure SQL Database
 - [Day 31](days/day-31) - Deploying and Managing a Web Application
-- [Day 32](days/day-32) - Synchronizing Containers Using the CLI
+- [Day 32](days/day-32) - Synchronizing Containers
 - [Day 33](days/day-33) - Integrating Virtual Machines with Application Load Balancer
 - [Day 34](days/day-34) - Enabling Internet Connectivity for Virtual Machines
 - [Day 35](days/day-35) - Configuring Virtual Network Peering
