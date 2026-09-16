@@ -66,6 +66,7 @@ export TF_VAR_tenant_id=$(jq -r '.subscriptions[] | select(.isDefault == true) |
 - [Day 47](days/day-47) - SQL Database Migration and Setup
 - [Day 48](days/day-48) - VM and ACR Integration for Storage
 - [Day 49](days/day-49) - VM Setup with Web Storage Integration
+- [Day 50](days/day-50) - VM Setup and Configuration for Azure Application Gateway
 
 ## Note on solution implementation
 
