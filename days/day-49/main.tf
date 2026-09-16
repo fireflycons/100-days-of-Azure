@@ -4,10 +4,6 @@ terraform {
       source  = "hashicorp/azurerm"
       version = "~> 5.1"
     }
-    docker = {
-      source  = "kreuzwerker/docker"
-      version = "~> 3.0"
-    }
     tls = {
       source  = "hashicorp/tls"
       version = "~> 4.0"
@@ -18,14 +14,6 @@ terraform {
 provider "azurerm" {
   resource_provider_registrations = "none"
   features {}
-}
-
-provider "docker" {
-  registry_auth {
-    address  = azurerm_container_registry.this.login_server
-    username = var.client_id
-    password = var.client_secret
-  }
 }
 
 provider "tls" {}
@@ -43,6 +31,26 @@ variable "infrastructure_prefix" {
 variable "resource_group_name" {
   description = "Name of the existing Azure resource group"
   type        = string
+}
+
+variable "azure_region" {
+  description = "Azure region for deployed resources"
+  type        = string
+
+  validation {
+    condition     = contains(["eastus", "westus", "centralus"], var.azure_region)
+    error_message = "azure_region must be one of eastus, westus, centralus."
+  }
+}
+
+variable "resource_suffix" {
+  description = "Numeric suffix used for the storage account name, such as 954575234."
+  type        = number
+
+  validation {
+    condition     = var.resource_suffix > 0 && var.resource_suffix == floor(var.resource_suffix)
+    error_message = "resource_suffix must be a positive whole number."
+  }
 }
 
 variable "client_id" {
@@ -66,36 +74,10 @@ variable "subscription_id" {
   type        = string
 }
 
-variable "azure_region" {
-  description = "Azure region for deployed resources"
+variable "index_file_path" {
+  description = "Linux-host path to the index.html file."
   type        = string
-
-  validation {
-    condition     = contains(["eastus", "westus", "centralus"], var.azure_region)
-    error_message = "azure_region must be one of eastus, westus, centralus."
-  }
-}
-
-variable "resource_suffix" {
-  description = "Numeric suffix used for the ACR and storage account names, such as 323730418."
-  type        = number
-
-  validation {
-    condition     = var.resource_suffix > 0 && var.resource_suffix == floor(var.resource_suffix)
-    error_message = "resource_suffix must be a positive whole number."
-  }
-}
-
-variable "dockerfile_path" {
-  description = "Linux-host path to the Docker build context, such as /root/pyapp."
-  type        = string
-  default     = "/root/pyapp"
-}
-
-variable "config_file_path" {
-  description = "Linux-host path to config.json."
-  type        = string
-  default     = "/root/config.json"
+  default     = "/root/index.html"
 }
 
 data "azurerm_resource_group" "this" {
@@ -103,16 +85,13 @@ data "azurerm_resource_group" "this" {
 }
 
 locals {
-  vm_name              = "${var.infrastructure_prefix}-vm"
-  acr_name             = "${var.infrastructure_prefix}acr${var.resource_suffix}"
-  storage_account_name = "${var.infrastructure_prefix}stor${var.resource_suffix}"
-  repository_name      = "${var.infrastructure_prefix}/python-app"
-  image_name           = "${local.repository_name}:latest"
-  image_uri            = "${local.acr_name}.azurecr.io/${local.image_name}"
-  container_name       = "${var.infrastructure_prefix}-python-app"
-  storage_container    = "${var.infrastructure_prefix}-config"
-  admin_username       = "azureuser"
-  ssh_key_path         = pathexpand("~/.ssh/id_rsa")
+  vm_name           = "${var.infrastructure_prefix}-vm"
+  vnet_name         = "${var.infrastructure_prefix}-vnet"
+  subnet_name       = "${var.infrastructure_prefix}-subnet"
+  storage_name      = "${var.infrastructure_prefix}stor${var.resource_suffix}"
+  storage_container = "${var.infrastructure_prefix}-container"
+  admin_username    = "azureuser"
+  ssh_key_path      = pathexpand("~/.ssh/id_rsa")
 }
 
 resource "tls_private_key" "vm" {
@@ -139,68 +118,46 @@ resource "terraform_data" "write_ssh_key" {
   }
 }
 
-resource "azurerm_container_registry" "this" {
-  name                = local.acr_name
-  resource_group_name = data.azurerm_resource_group.this.name
-  location            = var.azure_region
-  sku                 = "Basic"
-  admin_enabled       = true
-}
-
 resource "azurerm_storage_account" "this" {
-  name                     = local.storage_account_name
-  resource_group_name      = data.azurerm_resource_group.this.name
-  location                 = var.azure_region
-  account_tier             = "Standard"
-  account_replication_type = "LRS"
+  name                            = local.storage_name
+  resource_group_name             = data.azurerm_resource_group.this.name
+  location                        = var.azure_region
+  account_tier                    = "Standard"
+  account_replication_type        = "LRS"
+  allow_nested_items_to_be_public = false
+  public_network_access           = "Enabled"
 }
 
-resource "azurerm_storage_container" "config" {
-  name               = local.storage_container
-  storage_account_id = azurerm_storage_account.this.id
+resource "azurerm_storage_container" "this" {
+  name                  = local.storage_container
+  storage_account_id    = azurerm_storage_account.this.id
+  container_access_type = "private"
 }
 
-resource "azurerm_storage_blob" "config" {
-  name                 = "config.json"
-  storage_container_id = azurerm_storage_container.config.id
+resource "azurerm_storage_blob" "index" {
+  name                 = "index.html"
+  storage_container_id = azurerm_storage_container.this.id
   type                 = "Block"
-  source               = var.config_file_path
-  content_type         = "application/json"
-}
-
-resource "docker_image" "python_app" {
-  name = local.image_uri
-
-  build {
-    context = var.dockerfile_path
-  }
-}
-
-resource "docker_registry_image" "python_app" {
-  name          = docker_image.python_app.name
-  keep_remotely = true
-
-  triggers = {
-    image_id = docker_image.python_app.image_id
-  }
+  source               = var.index_file_path
+  content_type         = "text/html"
 }
 
 resource "azurerm_virtual_network" "this" {
-  name                = "${var.infrastructure_prefix}-vnet"
+  name                = local.vnet_name
   location            = var.azure_region
   resource_group_name = data.azurerm_resource_group.this.name
-  address_space       = ["10.48.0.0/16"]
+  address_space       = ["10.49.0.0/16"]
 }
 
-resource "azurerm_subnet" "vm" {
-  name                 = "${var.infrastructure_prefix}-vm-subnet"
+resource "azurerm_subnet" "this" {
+  name                 = local.subnet_name
   resource_group_name  = data.azurerm_resource_group.this.name
   virtual_network_name = azurerm_virtual_network.this.name
-  address_prefixes     = ["10.48.0.0/24"]
+  address_prefixes     = ["10.49.0.0/24"]
 }
 
-resource "azurerm_network_security_group" "vm" {
-  name                = "${var.infrastructure_prefix}-vm-nsg"
+resource "azurerm_network_security_group" "this" {
+  name                = "${local.vm_name}-nsg"
   location            = var.azure_region
   resource_group_name = data.azurerm_resource_group.this.name
 
@@ -229,42 +186,40 @@ resource "azurerm_network_security_group" "vm" {
   }
 }
 
-resource "azurerm_public_ip" "vm" {
-  name                = "${var.infrastructure_prefix}-vm-ip"
+resource "azurerm_public_ip" "this" {
+  name                = "${local.vm_name}-ip"
   location            = var.azure_region
   resource_group_name = data.azurerm_resource_group.this.name
   allocation_method   = "Static"
   sku                 = "Standard"
 }
 
-resource "azurerm_network_interface" "vm" {
-  name                = "${var.infrastructure_prefix}-vm-nic"
+resource "azurerm_network_interface" "this" {
+  name                = "${local.vm_name}-nic"
   location            = var.azure_region
   resource_group_name = data.azurerm_resource_group.this.name
 
   ip_configuration {
     name                          = "internal"
-    subnet_id                     = azurerm_subnet.vm.id
+    subnet_id                     = azurerm_subnet.this.id
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = azurerm_public_ip.vm.id
+    public_ip_address_id          = azurerm_public_ip.this.id
   }
 }
 
-resource "azurerm_network_interface_security_group_association" "vm" {
-  network_interface_id      = azurerm_network_interface.vm.id
-  network_security_group_id = azurerm_network_security_group.vm.id
+resource "azurerm_network_interface_security_group_association" "this" {
+  network_interface_id      = azurerm_network_interface.this.id
+  network_security_group_id = azurerm_network_security_group.this.id
 }
 
 resource "azurerm_linux_virtual_machine" "this" {
-  depends_on = [docker_registry_image.python_app]
-
   name                            = local.vm_name
   location                        = var.azure_region
   resource_group_name             = data.azurerm_resource_group.this.name
   size                            = "Standard_B1s"
   admin_username                  = local.admin_username
   disable_password_authentication = true
-  network_interface_ids           = [azurerm_network_interface.vm.id]
+  network_interface_ids           = [azurerm_network_interface.this.id]
 
   admin_ssh_key {
     username   = local.admin_username
@@ -273,10 +228,6 @@ resource "azurerm_linux_virtual_machine" "this" {
 
   identity {
     type = "SystemAssigned"
-  }
-
-  boot_diagnostics {
-    storage_account_uri = azurerm_storage_account.this.primary_blob_endpoint
   }
 
   os_disk {
@@ -295,43 +246,33 @@ resource "azurerm_linux_virtual_machine" "this" {
     #cloud-config
     package_update: true
     packages:
-      - docker.io
+      - nginx
       - curl
     runcmd:
-      - systemctl enable --now docker
+      - systemctl enable --now nginx
       - curl -sL https://aka.ms/InstallAzureCLIDeb | bash
   CLOUD_INIT
   )
 }
 
-resource "time_sleep" "wait_15_seconds" {
-  depends_on = [azurerm_linux_virtual_machine.this]
-
-  create_duration = "15s"
-}
-
 resource "terraform_data" "configure_vm" {
-
   depends_on = [
     terraform_data.write_ssh_key,
-    time_sleep.wait_15_seconds
-]
+    azurerm_storage_blob.index
+  ]
 
   triggers_replace = [
     azurerm_linux_virtual_machine.this.id,
-    docker_registry_image.python_app.id
+    azurerm_storage_blob.index.id,
   ]
 
   provisioner "local-exec" {
     interpreter = ["/bin/bash", "-c"]
 
     environment = {
-      VM_PUBLIC_IP      = azurerm_public_ip.vm.ip_address
-      ACR_NAME          = azurerm_container_registry.this.name
-      IMAGE_URI         = local.image_uri
-      CONTAINER_NAME    = local.container_name
+      VM_PUBLIC_IP      = azurerm_public_ip.this.ip_address
       STORAGE_ACCOUNT   = azurerm_storage_account.this.name
-      STORAGE_CONTAINER = azurerm_storage_container.config.name
+      STORAGE_CONTAINER = azurerm_storage_container.this.name
       SSH_KEY_PATH      = local.ssh_key_path
       CLIENT_ID         = var.client_id
       CLIENT_SECRET     = var.client_secret
@@ -344,18 +285,23 @@ resource "terraform_data" "configure_vm" {
       remote_command=$(cat <<REMOTE_COMMAND
       set -e
       while [ ! -f /var/lib/cloud/instance/boot-finished ]; do sleep 1; done
-      sudo chmod o+rw /var/run/docker.sock
       az login \
         --service-principal \
         --username "$CLIENT_ID" \
         --password "$CLIENT_SECRET" \
         --tenant "$TENANT_ID" \
         --subscription "$SUBSCRIPTION_ID"
-      az storage blob download --account-name $STORAGE_ACCOUNT --container-name $STORAGE_CONTAINER --name config.json --file /home/azureuser/config.json --auth-mode login --overwrite
-      az acr login --name $ACR_NAME
-      docker pull $IMAGE_URI
-      docker rm -f $CONTAINER_NAME 2>/dev/null || true
-      docker run -d --name $CONTAINER_NAME --restart unless-stopped -p 80:80 -v /home/azureuser/config.json:/app/config.json:ro $IMAGE_URI
+      az storage blob download \
+        --account-name "$STORAGE_ACCOUNT" \
+        --container-name "$STORAGE_CONTAINER" \
+        --name index.html \
+        --file index.html \
+        --auth-mode login \
+        --overwrite
+      sudo mv index.html /var/www/html/index.html
+      sudo chown www-data:www-data /var/www/html/index.html
+      sudo chmod 644 /var/www/html/index.html
+      sudo systemctl restart nginx
       REMOTE_COMMAND
       )
       ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i "$SSH_KEY_PATH" "azureuser@$VM_PUBLIC_IP" "$remote_command"
@@ -364,21 +310,16 @@ resource "terraform_data" "configure_vm" {
 }
 
 output "vm_public_ip" {
-  description = "Public IP address of the Python application VM."
-  value       = azurerm_public_ip.vm.ip_address
+  description = "Public IP address of the Nginx VM."
+  value       = azurerm_public_ip.this.ip_address
 }
 
-output "acr_login_server" {
-  description = "ACR login server containing the application image."
-  value       = azurerm_container_registry.this.login_server
-}
-
-output "image_uri" {
-  description = "Fully qualified ACR image URI."
-  value       = local.image_uri
+output "storage_account_name" {
+  description = "Name of the private storage account containing index.html."
+  value       = azurerm_storage_account.this.name
 }
 
 output "storage_container_name" {
-  description = "Blob container containing config.json."
-  value       = azurerm_storage_container.config.name
+  description = "Name of the private blob container containing index.html."
+  value       = azurerm_storage_container.this.name
 }
