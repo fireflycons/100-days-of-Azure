@@ -8,6 +8,10 @@ terraform {
       source  = "hashicorp/tls"
       version = "~> 4.0"
     }
+    local = {
+      source  = "hashicorp/local"
+      version = "~> 2.5"
+    }
   }
 }
 
@@ -17,6 +21,8 @@ provider "azurerm" {
 }
 
 provider "tls" {}
+
+provider "local" {}
 
 variable "infrastructure_prefix" {
   description = "Prefix used for resource names (e.g. devops, xfusion, datacenter, nautilus)"
@@ -59,6 +65,18 @@ data "azurerm_resource_group" "this" {
 resource "tls_private_key" "vm_key" {
   algorithm = "RSA"
   rsa_bits  = 4096
+}
+
+resource "local_sensitive_file" "vm_private_key" {
+  content         = tls_private_key.vm_key.private_key_pem
+  filename        = pathexpand("~/.ssh/id_rsa")
+  file_permission = "0600"
+}
+
+resource "local_file" "vm_public_key" {
+  content         = tls_private_key.vm_key.public_key_openssh
+  filename        = pathexpand("~/.ssh/id_rsa.pub")
+  file_permission = "0600"
 }
 
 resource "azurerm_virtual_network" "public" {
@@ -168,10 +186,4 @@ output "vm_id" {
 output "vm_public_ip" {
   description = "Public IP address for SSH access"
   value       = azurerm_public_ip.public.ip_address
-}
-
-output "ssh_private_key" {
-  description = "Generated private SSH key"
-  value       = tls_private_key.vm_key.private_key_pem
-  sensitive   = true
 }
