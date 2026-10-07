@@ -37,8 +37,18 @@ variable "azure_region" {
   }
 }
 
+variable "web_app_name_suffix" {
+  description = "Positive whole-number suffix for the web app name (e.g. 170320239)"
+  type        = number
+
+  validation {
+    condition     = var.web_app_name_suffix > 0 && floor(var.web_app_name_suffix) == var.web_app_name_suffix
+    error_message = "web_app_name_suffix must be a positive whole number."
+  }
+}
+
 locals {
-  web_app_name      = "${var.infrastructure_prefix}-webapp"
+  web_app_name      = "${var.infrastructure_prefix}-webapp-${var.web_app_name_suffix}"
   service_plan_name = "${var.infrastructure_prefix}-learn-python"
   tags = {
     Name        = "WebAppLearning"
